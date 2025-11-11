@@ -1,0 +1,15 @@
+quarkus:
+  application:
+    name: messages-lambda
+  banner:
+    enabled: false
+  devservices:
+    enabled: false
+  package:
+    output-name: messages-lambda
+  ssl:
+    native: true
+  log:
+    level: INFO
+    console:
+      format: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [${QUARKUS_APP_NAME:${quarkus.application.name}},%X{X-B3-TraceId},%X{X-B3-SpanID}] %C{1.}: %m%n'

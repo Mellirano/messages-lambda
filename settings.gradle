@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        mavenLocal()
+    }
+    plugins {
+        id 'io.quarkus' version '3.29.0'
+    }
+}
+rootProject.name = 'messages-lambda'

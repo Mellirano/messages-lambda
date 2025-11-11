@@ -1,0 +1,63 @@
+buildscript {
+    ext {
+        lombokVersion = "1.18.38"
+        quarkusVersion = '3.29.0'
+        awsSdkVersion = '2.37.5'
+        quarkusAmazonVersion = '3.12.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'io.quarkus'
+}
+
+group = 'ua.udunt.hmnd'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}")
+    implementation(
+            'io.quarkus:quarkus-arc',
+            'io.quarkus:quarkus-rest',
+            'io.quarkus:quarkus-config-yaml',
+            'io.quarkus:quarkus-amazon-lambda',
+            "io.quarkiverse.amazonservices:quarkus-amazon-dynamodb:${quarkusAmazonVersion}",
+            "io.quarkiverse.amazonservices:quarkus-amazon-sns:${quarkusAmazonVersion}",
+            "software.amazon.awssdk:url-connection-client:${awsSdkVersion}",
+            "software.amazon.awssdk:netty-nio-client:${awsSdkVersion}"
+    )
+    compileOnly(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    annotationProcessor(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    testImplementation(
+            'io.quarkus:quarkus-junit5',
+            'io.quarkus:quarkus-junit5-mockito',
+            'io.quarkus:quarkus-junit5-component',
+            'io.rest-assured:rest-assured'
+    )
+    testCompileOnly(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    testAnnotationProcessor(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+}
+
+
+test {
+    useJUnitPlatform()
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
