@@ -1,62 +1,38 @@
 # messages-lambda
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Quarkus-based AWS Lambda function that listens to **DynamoDB Streams** events from the `messages-table` and publishes notifications to an **Amazon SNS** topic.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+This project is used as a example of an asynchronous, event-driven system on AWS.
 
-## Running the application in dev mode
+---
 
-You can run your application in dev mode that enables live coding using:
+## Overview
 
-```shell script
-./gradlew quarkusDev
-```
+The goal of this project is to demonstrate how to:
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+- React to **changes and TTL-based auto-deletions** in a DynamoDB table.
+- Process change events with an **AWS Lambda** function written in Java using **Quarkus**.
+- Forward processed events to an **SNS topic** for further fan-out to e-mail or other subscribers.
+- Use **CloudWatch Logs** for observability.
+- Keep **IAM permissions** for the Lambda function as small as possible.
 
-## Packaging and running the application
+---
 
-The application can be packaged using:
+## Architecture
 
-```shell script
-./gradlew build
-```
-
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/messages-lambda-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+```text
+      Client
+        │
+        ▼
+DynamoDB table: messages-table (TTL enabled)
+        │
+        │  DynamoDB Stream (INSERT, MODIFY, REMOVE incl. TTL expiration)
+        ▼
+AWS Lambda: messages-lambda (Quarkus)
+        │
+        │  publish message
+        ▼
+Amazon SNS topic
+        │
+        ├─ Email / SMS subscribers
+        └─ Other services
